@@ -24,18 +24,22 @@ function json2xml($json) {
             }
         } else {
             foreach($a as $k=>$v) {
-                if(is_object($v)) {
-                    $ch=$c->addChild($s?'item':$k);
-                    $f($f,$ch,$v);
-                } else if(is_array($v)) {
-                    $ch=$c->addChild($s?'item':$k);
-                    $f($f,$ch,$v,true);
-                } else if(is_bool($v)) {
-                    $ch=$c->addChild($s?'item':$k,$v?'true':'false');
-                    $ch->addAttribute('type', $t($v));
+                if ($k=='__type' && is_object($a)) {
+                    $c->addAttribute('__type', $v);
                 } else {
-                    $ch=$c->addChild($s?'item':$k,$v);
-                    $ch->addAttribute('type', $t($v));
+                    if(is_object($v)) {
+                        $ch=$c->addChild($s?'item':$k);
+                        $f($f,$ch,$v);
+                    } else if(is_array($v)) {
+                        $ch=$c->addChild($s?'item':$k);
+                        $f($f,$ch,$v,true);
+                    } else if(is_bool($v)) {
+                        $ch=$c->addChild($s?'item':$k,$v?'true':'false');
+                        $ch->addAttribute('type', $t($v));
+                    } else {
+                        $ch=$c->addChild($s?'item':$k,$v);
+                        $ch->addAttribute('type', $t($v));
+                    }
                 }
             }
         }
@@ -65,6 +69,9 @@ function xml2json($xml) {
     $f = function($f,&$a) {
             foreach($a as $k=>&$v) {
                 if($k==='@attributes') {
+                    if (isset($v->__type) && is_object($a)) {
+                        $a->__type = $v->__type;
+                    }
                     if ($v->type=='null') {
                         $a = null; 
                         return;
