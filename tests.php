@@ -1,7 +1,5 @@
 <?php
 
-// source: https://msdn.microsoft.com/en-us/library/bb924435(v=vs.110).aspx
-
 use PHPUnit\Framework\TestCase;
 
 include 'json2xml.php';
