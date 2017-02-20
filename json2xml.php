@@ -3,7 +3,7 @@
 function json2xml($json) {
     $t = function($v) {
         switch(gettype($v)) {
-            case 'boolean': return $v?'true':'false';
+            case 'boolean': return 'boolean';
             case 'integer': return 'number';
             case 'double':  return 'number';
             case 'string':  return 'string';
@@ -13,27 +13,34 @@ function json2xml($json) {
         }
     };
     $a = json_decode($json);
-    $c = new SimpleXMLElement('<?xml version="1.0"?><root type="'.$t($a).'"></root>');
+    $c = new SimpleXMLElement('<root/>');
     $f = function($f,$c,$a,$s=false) use ($t) {
+        $c->addAttribute('type', $t($a));
+        if (is_scalar($a)||is_null($a)) {
+            if(is_bool($a)){ 
+                $c[0] = $a?'true':'false';
+            } else {
+                $c[0] = $a;
+            }
+        } else {
             foreach($a as $k=>$v) {
                 if(is_object($v)) {
-                    $ch=$c->addChild($s?'value':$k);
-                    $ch->addAttribute('type', $t($v));
+                    $ch=$c->addChild($s?'item':$k);
                     $f($f,$ch,$v);
                 } else if(is_array($v)) {
-                    $ch=$c->addChild($s?'value':$k);
-                    $ch->addAttribute('type', $t($v));
+                    $ch=$c->addChild($s?'item':$k);
                     $f($f,$ch,$v,true);
                 } else if(is_bool($v)) {
-                    $ch=$c->addChild($s?'value':$k,'');
+                    $ch=$c->addChild($s?'item':$k,$v?'true':'false');
                     $ch->addAttribute('type', $t($v));
                 } else {
-                    $ch=$c->addChild($s?'value':$k,$v);
+                    $ch=$c->addChild($s?'item':$k,$v);
                     $ch->addAttribute('type', $t($v));
                 }
             }
+        }
     };
-    $f($f,$c,$a);
+    $f($f,$c,$a,$t($a)=='array');
     return trim($c->asXML());
 }
 
@@ -44,8 +51,8 @@ function xml2json($xml) {
                 $p($p,$node);
             } else {
                 if($n->hasAttributes() && strlen($n->nodeValue)){
-                    $n->setAttribute("value", $node->textContent);
-                    $node->nodeValue = "";
+                    $n->setAttribute('value', $node->textContent);
+                    $node->nodeValue = '';
                 }
             }
         }
@@ -62,12 +69,9 @@ function xml2json($xml) {
                         $a = null; 
                         return;
                     }
-                    if ($v->type=='true') {
-                        $a = true; 
-                        return;
-                    }
-                    if ($v->type=='false') {
-                        $a = false; 
+                    if ($v->type=='boolean') {
+                        $b = substr(strtolower($v->value[0]),0,1);
+                        $a = in_array($b,array('1','t'));
                         return;
                     }
                     if ($v->type=='number') {
@@ -75,7 +79,7 @@ function xml2json($xml) {
                         return;
                     }
                     if ($v->type=='string') {
-                        $a = $v->value; 
+                        $a = $v->value;
                         return;
                     }
                     unset($a->$k);
