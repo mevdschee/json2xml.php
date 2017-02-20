@@ -1,8 +1,5 @@
 <?php
 
-$xml = "<?xml version=\"1.0\"?>\n".'<root type="object"><depth type="false"/><model type="string">TRX-120</model><width type="number">100</width><test type="array"><value type="object"><me type="null"/></value><value type="number">2</value></test><height type="null"/></root>';
-$json = '{"depth":false,"model":"TRX-120","width":100,"test":[{"me":null},2],"height":null}';
-
 function json2xml($json) {
     $t = function($v) {
         switch(gettype($v)) {
@@ -96,10 +93,3 @@ function xml2json($xml) {
     $f($f,$a);
     return json_encode($a);
 }
-
-var_dump(json2xml($json));
-var_dump($xml);
-var_dump(json2xml($json)==$xml);
-var_dump(xml2json(json2xml($json)));
-var_dump($json);
-var_dump(xml2json(json2xml($json))==$json);
