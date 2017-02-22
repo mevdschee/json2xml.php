@@ -84,5 +84,5 @@ function xml2json($xml) {
         return $c;
     };
     $c = $f($f,$a);
-    return json_encode($c);
+    return json_encode($c,64);//64=JSON_UNESCAPED_SLASHES
 }
