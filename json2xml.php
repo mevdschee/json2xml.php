@@ -2,6 +2,7 @@
 
 function json2xml($json) {
     $a = json_decode($json);
+    $c = new SimpleXMLElement('<root/>');
     $t = function($v) {
         switch(gettype($v)) {
             case 'boolean': return 'boolean';
@@ -13,7 +14,6 @@ function json2xml($json) {
             case 'NULL':    return 'null';
         }
     };
-    $c = new SimpleXMLElement('<root/>');
     $f = function($f,$c,$a,$s=false) use ($t) {
         $c->addAttribute('type', $t($a));
         if (is_scalar($a)||is_null($a)) {
