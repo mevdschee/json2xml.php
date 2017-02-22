@@ -4,14 +4,11 @@ function json2xml($json) {
     $a = json_decode($json);
     $c = new SimpleXMLElement('<root/>');
     $t = function($v) {
-        switch(gettype($v)) {
-            case 'boolean': return 'boolean';
+        $type = gettype($v);
+        switch($type) {
             case 'integer': return 'number';
             case 'double':  return 'number';
-            case 'string':  return 'string';
-            case 'array':   return 'array';
-            case 'object':  return 'object';
-            case 'NULL':    return 'null';
+            default: return strtolower($type);
         }
     };
     $f = function($f,$c,$a,$s=false) use ($t) {
