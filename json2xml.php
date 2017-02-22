@@ -1,4 +1,7 @@
 <?php
+// Copyright: Maurits van der Schee <maurits@vdschee.nl>
+// Description: Convert from JSON to XML and back.
+// License: MIT
 
 function json2xml($json) {
     $a = json_decode($json);
