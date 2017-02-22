@@ -8,8 +8,8 @@ class json2xml_Test extends TestCase
 {
     public function testComplexConversion()
     {
-        $json = '{"depth":false,"model":"TRX-120","width":100,"test":[{"me":null},2],"height":null}';
-        $xml = '<root type="object"><depth type="boolean">false</depth><model type="string">TRX-120</model><width type="number">100</width><test type="array"><item type="object"><me type="null"></me></item><item type="number">2</item></test><height type="null"></height></root>';
+        $json = '{"depth":false,"model":"TRX-120","width":100,"test":[{"me":null},2.5],"height":null}';
+        $xml = '<root type="object"><depth type="boolean">false</depth><model type="string">TRX-120</model><width type="number">100</width><test type="array"><item type="object"><me type="null"></me></item><item type="number">2.5</item></test><height type="null"></height></root>';
         $this->assertEquals($xml,json2xml($json));
         $this->assertEquals($json,xml2json($xml));
     }
