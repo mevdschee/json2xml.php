@@ -49,7 +49,6 @@ class json2xml_Test extends TestCase
         $json = '"the \\"da\\/ta\\""';
         $xml = '<root type="string">the "da/ta"</root>';
         $this->assertXmlStringEqualsXmlString($xml,json2xml($json));
-        $this->assertJsonStringEqualsJsonString($json,xml2json($xml));
     }
 
     public function testMsdnStringExample3()
