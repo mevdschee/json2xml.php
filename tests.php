@@ -168,4 +168,84 @@ class json2xml_Test extends TestCase
         $this->assertEquals($xml,json2xml($json));
         $this->assertEquals($json,xml2json($xml));
     }
+
+     /**
+      * @expectedException        DOMException
+      * @expectedExceptionMessage Namespace Error
+      */
+    public function testColonInKey()
+    {
+        $json = '{"a:b":true}';
+        $xml = '<root type="object"><a:b type="boolean">true</a:b></root>';
+        $this->assertEquals($xml,json2xml($json));
+        $this->assertEquals($json,xml2json($xml));
+    }
+
+     /**
+      * @expectedException        DOMException
+      * @expectedExceptionMessage Invalid Character Error
+      */
+    public function testAmpersandInKey()
+    {
+        $json = '{"a&b":true}';
+        $xml = '<root type="object"><a&b type="boolean">true</a&b></root>';
+        $this->assertEquals($xml,json2xml($json));
+        $this->assertEquals($json,xml2json($xml));
+    }
+
+     /**
+      * @expectedException        DOMException
+      * @expectedExceptionMessage Invalid Character Error
+      */
+    public function testSlashInKey()
+    {
+        $json = '{"a/b":true}';
+        $xml = '<root type="object"><a/b type="boolean">true</a/b></root>';
+        $this->assertEquals($xml,json2xml($json));
+        $this->assertEquals($json,xml2json($xml));
+    }
+
+    public function testUnderscoreInKey()
+    {
+        $json = '{"a_b":true}';
+        $xml = '<root type="object"><a_b type="boolean">true</a_b></root>';
+        $this->assertEquals($xml,json2xml($json));
+        $this->assertEquals($json,xml2json($xml));
+    }
+
+    public function testHyphenInKey()
+    {
+        $json = '{"a-b":true}';
+        $xml = '<root type="object"><a-b type="boolean">true</a-b></root>';
+        $this->assertEquals($xml,json2xml($json));
+        $this->assertEquals($json,xml2json($xml));
+    }
+
+    public function testDotInKey()
+    {
+        $json = '{"a.b":true}';
+        $xml = '<root type="object"><a.b type="boolean">true</a.b></root>';
+        $this->assertEquals($xml,json2xml($json));
+        $this->assertEquals($json,xml2json($xml));
+    }
+
+    public function testMiddleDotInKey()
+    {
+        $json = '{"a\u00b7b":true}';
+        $xml = '<root type="object"><a·b type="boolean">true</a·b></root>';
+        $this->assertEquals($xml,json2xml($json));
+        $this->assertEquals($json,xml2json($xml));
+    }
+
+    public function testAllAscii7bitInValue()
+    {
+        $str = '';
+        for ($i=32;$i<127;$i++) {
+            $str.=chr($i);
+        }
+        $json = json_encode($str,64);//64=JSON_UNESCAPED_SLASHES
+        $xml = '<root type="string"> !"#$%&amp;\'()*+,-./0123456789:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~</root>';
+        $this->assertEquals($xml,json2xml($json));
+        $this->assertEquals($json,xml2json($xml));
+    }
 }
